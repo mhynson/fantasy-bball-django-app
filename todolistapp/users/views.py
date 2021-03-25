@@ -5,7 +5,7 @@ from .forms import CustomUserCreationForm
 from .models import FantasyTeam, Player
 from pprint import pprint
 from datetime import datetime
-from crud import crud
+# from crud import crud
 
 import json
 
@@ -30,6 +30,13 @@ def register(request):
 
 
 def team_create(request):
+    teams = FantasyTeam.objects.all()
+
+    # Load all players
+    players = None
+    with open('./players.json') as f:
+        players = json.load(f)
+
 
     if request.method == "POST":
 
@@ -46,7 +53,7 @@ def team_create(request):
             # Extract the incoming team name from the incoming POST request.
             incoming_team_name = request.POST["fantasy-team-name"]
             user_id = request.user.id
-            matching_teams = FantasyTeam.objects.filter(user=user_id)
+            matching_teams = FantasyTeam.objects.filter(user=request.user)
             team_already_exists = False
 
             print("=== incoming team name ===")
@@ -69,21 +76,39 @@ def team_create(request):
             if team_already_exists:
                 print("This team name is already taken! Please pick a different one.")
                 # exit out of the function
+                # return render(request, "teams/create.html", {
+                #     "message": "This team name is already taken! Please pick a different one.",
+                #     "players": players,
+                #     "teams": teams,
+                # })
+
 
             # Now, create the team object (based on the FantasyTeam Model) with the given team name and other attributes
             new_team = FantasyTeam(
                 team_name=incoming_team_name,
-                user=user_id,
+                user=request.user,
                 created_date=datetime.now(),
                 last_modified_date=datetime.now(),
             )
             new_team.save()
 
+            player_ids = list()
+            count = 1
+            while (count < 6):
+                player_id = request.POST["fantasy-player-" + str(count)]
+                player_ids.append(player_id)
 
 
+                matching_player =  [player for player in players if player["id"] == player_id]
+                print(" --- matching_player " + player_id + " ---")
+                print(matching_player)
+
+                count += 1
 
 
-
+            print("=== player ids ===")
+            print(player_ids)
+            # print(new_team)
 
 
         else:
@@ -97,13 +122,11 @@ def team_create(request):
         # 2. If not, then add the team to the user
         # 3. Add the players to the team
 
-    # Load all players
-    players = None
-    with open('./players.json') as f:
-        players = json.load(f)
+
 
     return render(request, "teams/create.html", {
-        "players": players
+        "players": players,
+        "teams": teams
     })
 # def lists(request):
 

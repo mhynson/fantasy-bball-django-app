@@ -24,10 +24,22 @@
 
 <h1>Create a Team</h1>
 
+{%if message %}
+<p style="color: red;">{{ message }}</p>
+{% endif %}
+
+Any teams?
+{% for team in teams %}
+        <p>{{ team.team_name }}</p>
+
+
+    {% endfor %}
+END CHECK FOR TEAMS
+
+
 <form method="POST">
     {% csrf_token %}
      <input type="submit" value="Submit" />
-
     <label>Team Name</label>
     <input type="text" placeholder="Enter a team name" name="fantasy-team-name" />
 
