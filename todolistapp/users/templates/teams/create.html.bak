@@ -1,0 +1,102 @@
+<!-- TODO: here is where you will create your team -->
+
+<!-- TODO: FORM
+
+    1. Team Name
+    2. Select box to show the list of available players
+        - This data should be statically created.
+        - First name, last name, position, years in league, stats (points pg, assists pg, rebounds pg, steals pg)
+    3. Submit
+-->
+
+<style>
+    .player-list li {
+        display: flex;
+        list-item: none;
+        margin: 16px 0;
+    }
+
+    .player-list li div {
+        margin-right: 16px;
+    }
+</style>
+
+
+<h1>Create a Team</h1>
+
+{%if message %}
+<p style="color: red;">{{ message }}</p>
+{% endif %}
+
+Any teams?
+{% for team in teams %}
+        <p>{{ team.team_name }}</p>
+
+
+    {% endfor %}
+END CHECK FOR TEAMS
+
+
+<form method="POST">
+    {% csrf_token %}
+     <input type="submit" value="Submit" />
+    <label>Team Name</label>
+    <input type="text" placeholder="Enter a team name" name="fantasy-team-name" />
+
+    <h2>Add up to 5 players</h2>
+    <ul class="player-list">
+        <!-- Loop through each player -->
+        {% for player in players %}
+        <li>
+            <div>{{ player.name.first }} {{ player.name.last }}</div>
+            <div>{{ player.team }}</div>
+            <div>{{ player.stats.points_per_game }}</div>
+            <div>{{ player.stats.rebounds_per_game }}</div>
+            <div>{{ player.stats.assists_per_game }}</div>
+            <a href="#" data-player-id="{{ player.id }}"
+               data-player-name="{{ player.name.first }} {{ player.name.last }}">Add a player</a>
+        </li>
+        {% endfor %}
+    </ul>
+
+    <input type="hidden" name="fantasy-player-1" />
+    <input type="hidden" name="fantasy-player-2"  />
+    <input type="hidden" name="fantasy-player-3" />
+    <input type="hidden" name="fantasy-player-4"  />
+    <input type="hidden" name="fantasy-player-5"  />
+
+
+</form>
+
+
+<script>
+    const $ = document.querySelector.bind(document);
+    const $$ = document.querySelectorAll.bind(document);
+
+    let count = 0;
+
+    const playerIds = $$("[data-player-id]");
+    playerIds.forEach(playerId => {
+        playerId.addEventListener("click", event => {
+            const target = event.target;
+            const playerId = target.dataset.playerId;
+            const playerName = target.dataset.playerName;
+            // alert( playerId + " : " + playerName );
+
+            if (count == 5) {
+                alert("nope, can't add any more players");
+            }
+            count++;
+
+            const hiddenInputName = "fantasy-player-" + count;
+            $(`[name=${hiddenInputName}]`).value = playerId;
+
+            console.log("added a new player", playerName);
+
+
+
+        });
+    });
+
+
+</script>
