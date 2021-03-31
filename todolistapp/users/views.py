@@ -58,7 +58,7 @@ def team_create(request):
     '''
 
     context = {
-        "message": "Hi!"
+        "message": "Hello!"
     }
 
     if request.method == "POST":
