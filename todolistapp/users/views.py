@@ -30,7 +30,36 @@ def register(request):
 
 
 def teams_view(request):
-    return render(request, "teams/view-all.html")
+    # Get all of the user's teams, so they can be displayed on the page.
+    # This is the R of CRUD - to read from the database.
+
+    # Fetch all teams.
+    teams = FantasyTeam.objects.all()
+
+    # Fetch only the current user's teams.
+    # LEFT side (user) is the property name that belongs to the FantasyTeam class
+    # RIGHT side (request.user) is the value that we want to match to.
+    our_teams = FantasyTeam.objects.filter(user=request.user)
+
+    # Matching team
+    incoming_team_name = ""
+    if request.GET and request.GET["team"]:
+        incoming_team_name = request.GET["team"]
+    matches = FantasyTeam.objects.filter(team_name=incoming_team_name)
+
+    print("=== user ===")
+    print(request.user.username)
+    print(request.user.id)
+    print("=== /user ===")
+
+    context = {
+        "teams": teams,
+        "our_teams": our_teams,
+        "user": request.user,
+        "matches": matches,
+    }
+
+    return render(request, "teams/view-all.html", context)
 
 
 

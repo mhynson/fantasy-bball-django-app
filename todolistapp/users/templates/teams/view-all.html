@@ -1,2 +1,18 @@
 <!-- TODO: view all teams here -->
-<h1>View all Teams</h1>
+<h1>Teams in the League</h1>
+
+{% for team in teams %}
+    <h2>{{ team.team_name }}</h2>
+{% endfor %}
+
+<hr />
+<h1>Your TEAMS</h1>
+{% for team in our_teams %}
+    <h2>{{ team.team_name }}</h2>
+{% endfor %}
+
+<hr />
+<h1>TEAM MATCHES</h1>
+{% for team in matches %}
+    <h2 style="color: green">{{ team.team_name }}</h2>
+{% endfor %}
